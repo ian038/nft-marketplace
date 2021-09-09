@@ -8,11 +8,11 @@ module.exports = {
     },
     mumbai: {
       url: process.env.MUMBAI_NETWORK,
-      accounts: []
+      accounts: [process.env.PRIVATE_KEY]
     },
     mainnet: {
       url: process.env.MAINNET_NETWORK,
-      accounts: []
+      accounts: [process.env.PRIVATE_KEY]
     }
   },
   solidity: "0.8.4",
