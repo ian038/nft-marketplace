@@ -24,6 +24,10 @@ describe("NftMarket", function () {
     await market.createMarketItem(nftAddress, 1, auctionPrice, { value: listingPrice })
     await market.createMarketItem(nftAddress, 2, auctionPrice, { value: listingPrice })
 
+    const [_, buyerAddress] = await ethers.getSigners()
+    await market.connect(buyerAddress).createMarketSale(nftAddress, 1, { value: auctionPrice })
 
+    const items = await market.fetchMarketItems()
+    console.log('Items: ', items)
   });
 });
