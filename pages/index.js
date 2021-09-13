@@ -37,7 +37,13 @@ export default function Home() {
       }
       return item
     }))
+    setNft(items)
+    setLoading(true)
   }
+
+  if(loading && !nft.length) return (
+    <h1 className='px-20 py-10 text3xl'>No items in market place</h1>
+  )
 
   return (
     <div className={styles.container}>
