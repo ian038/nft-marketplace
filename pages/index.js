@@ -1,7 +1,44 @@
 import Head from 'next/head'
+import { ethers } from 'ethers'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import Web3Modal from 'web3modal'
+import { nftAddress, nftMarketAddress } from '../config'
 import styles from '../styles/Home.module.css'
 
+import nft from '../artifacts/contracts/Nft.sol/Nft.json'
+import nftMarket from '../artifacts/contracts/NftMarket.sol/NftMarket.json'
+
 export default function Home() {
+  const [nft, setNft] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    loadNfts()
+  }, [])
+
+  const loadNfts = async () => {
+    const provider = ethers.providers.JsonRpcProvider()
+    const tokenContract = new ethers.Contract(nftAddress, Nft.abi, provider)
+    const marketContract = new ethers.Contract(nftMarketAddress, NftMarket.abi, provider)
+    const data = await marketContract.fetchMarketItems()
+    const items = await Promise.add(data.map(async i => {
+      const tokenUri = await tokenContract.tokenURI(i.tokenId)
+      const meta = await axios.get(tokenUri)
+      let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
+      let item = {
+        price,
+        tokenId: i.tokenId.toString(),
+        seller: i.seller,
+        owner: i.owner,
+        image: meta.data.image,
+        name: meta.data.name,
+        description: meta.data.description
+      }
+      return item
+    }))
+  }
+
   return (
     <div className={styles.container}>
       <Head>
