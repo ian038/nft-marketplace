@@ -1,12 +1,12 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { ethers } from 'ethers'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Web3Modal from 'web3modal'
 import { nftAddress, nftMarketAddress } from '../config'
-import styles from '../styles/Home.module.css'
 
-import nft from '../artifacts/contracts/Nft.sol/Nft.json'
+import NFT from '../artifacts/contracts/Nft.sol/Nft.json'
 import nftMarket from '../artifacts/contracts/NftMarket.sol/NftMarket.json'
 
 export default function Home() {
@@ -18,9 +18,9 @@ export default function Home() {
   }, [])
 
   const loadNfts = async () => {
-    const provider = ethers.providers.JsonRpcProvider()
-    const tokenContract = new ethers.Contract(nftAddress, Nft.abi, provider)
-    const marketContract = new ethers.Contract(nftMarketAddress, NftMarket.abi, provider)
+    const provider = new ethers.providers.JsonRpcProvider()
+    const tokenContract = new ethers.Contract(nftAddress, NFT.abi, provider)
+    const marketContract = new ethers.Contract(nftMarketAddress, nftMarket.abi, provider)
     const data = await marketContract.fetchMarketItems()
     const items = await Promise.add(data.map(async i => {
       const tokenUri = await tokenContract.tokenURI(i.tokenId)
@@ -46,7 +46,7 @@ export default function Home() {
     const connect = await web3modal.connect()
     const provider = new ethers.providers.Web3Provider(connect)
     const signer = provider.getSigner()
-    const contract = new ethers.Contract(nftMarketAddress, NftMarket.abi, signer)
+    const contract = new ethers.Contract(nftMarketAddress, nftMarket.abi, signer)
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
     const transaction = await contract.createMarketSale(nftAddress, nft.tokenId, {
       value: price
@@ -60,16 +60,38 @@ export default function Home() {
   )
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>NFT Marketplace</title>
         <meta name="description" content="Fullstack NFT Marketplace with Nextjs and Ethereum network" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Home
-        </h1>
+      <main>
+        <div className='flex justify-center'>
+          <div className='px-4' style={{ maxWidth: '1600px' }}>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4'>
+              {
+                nft.map((n, i) => (
+                  <div key={i} className='border shadow rounded-xl overflow-hidden'>
+                    <Image src={n.image} alt='Nft Image' />
+                    <div className='p-4'>
+                      <p style={{ height: '64px' }} className='text-2xl font-semibold'>{n.name}</p>
+                      <div style={{ height: '70px', overflow: 'hidden' }}>
+                        <p className="text-gray-400">{n.description}</p>
+                      </div>
+                    </div>
+                    <div className='p-4 bg-black'>
+                      <p className='text-2xl mb-4 font-bold text-white'>{n.price} Matic</p>
+                      <button className='w-full bg-blue-500 text-white font-bold py-2 px-12 rounded' onClick={() => buyNft(nft)}>
+                        Buy
+                      </button>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   )
