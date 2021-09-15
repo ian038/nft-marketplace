@@ -4,6 +4,7 @@ import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from "next/router";
 import { nftAddress, nftMarketAddress } from '../config'
 import Web3Modal from 'web3modal'
+import Image from 'next/image'
 
 import NFT from '../artifacts/contracts/Nft.sol/Nft.json'
 import nftMarket from '../artifacts/contracts/NftMarket.sol/NftMarket.json'
@@ -65,7 +66,35 @@ export default function CreateItem() {
     return (
         <div className='flex justify-center'>
             <div className='w-1/2 flex flex-col pb-12'>
-
+                <input 
+                placeholder='Asset Name'
+                className='mt-8 border rounded p-4'
+                onChange={e => setFormInput({ ...formInput, name: e.target.value })}
+                />
+                <textarea 
+                placeholder='Asset Description'
+                className='mt-2 border rounded p-4'
+                onChange={e => setFormInput({ ...formInput, description: e.target.value })}
+                />
+                <input 
+                placeholder='Asset Price in Matic'
+                className='mt-2 border rounded p-4'
+                onChange={e => setFormInput({ ...formInput, price: e.target.value })}
+                />
+                <input 
+                type='file'
+                name='Asset'
+                className='my-4'
+                onChange={handleChange}
+                />
+                {
+                    fileUrl && (
+                        <Image className='rounded mt-4' src={fileUrl} alt="Asset Image" />
+                    )
+                }
+                <button onClick={createItem} className='font-bold mt-4 bg-blue-500 text-white rounded p-4 shadow-lg'>
+                    Create Digital Asset
+                </button>
             </div>
         </div>
     )
