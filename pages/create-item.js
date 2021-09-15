@@ -36,12 +36,14 @@ export default function CreateItem() {
         try {
             const added = await client.add(data)
             const url = `https://ipfs.infura.io/ipfs/$${added.path}`
+            /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+            createSale(url)
         } catch (error) {
             console.log('Error uploading file: ', error)
         }
     }
 
-    const createSale = async() => {
+    const createSale = async(url) => {
         const web3modal = new Web3Modal()
         const connect = await web3modal.connect()
         const provider = new ethers.providers.Web3Provider(connect)
@@ -89,7 +91,7 @@ export default function CreateItem() {
                 />
                 {
                     fileUrl && (
-                        <Image className='rounded mt-4' src={fileUrl} alt="Asset Image" />
+                        <Image className='rounded mt-4' width={350} height={350} src={fileUrl} alt="Asset Image" />
                     )
                 }
                 <button onClick={createItem} className='font-bold mt-4 bg-blue-500 text-white rounded p-4 shadow-lg'>
