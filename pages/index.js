@@ -6,8 +6,8 @@ import axios from 'axios'
 import Web3Modal from 'web3modal'
 import { nftAddress, nftMarketAddress } from '../config'
 
-import NFT from '../artifacts/contracts/Nft.sol/Nft.json'
-import nftMarket from '../artifacts/contracts/NftMarket.sol/NftMarket.json'
+import Nft from '../artifacts/contracts/Nft.sol/Nft.json'
+import NftMarket from '../artifacts/contracts/NftMarket.sol/NftMarket.json'
 
 export default function Home() {
   const [nft, setNft] = useState([])
@@ -19,8 +19,8 @@ export default function Home() {
 
   const loadNfts = async () => {
     const provider = new ethers.providers.JsonRpcProvider()
-    const tokenContract = new ethers.Contract(nftAddress, NFT.abi, provider)
-    const marketContract = new ethers.Contract(nftMarketAddress, nftMarket.abi, provider)
+    const tokenContract = new ethers.Contract(nftAddress, Nft.abi, provider)
+    const marketContract = new ethers.Contract(nftMarketAddress, NftMarket.abi, provider)
     const data = await marketContract.fetchMarketItems()
     const items = await Promise.all(data.map(async i => {
       const tokenUri = await tokenContract.tokenURI(i.tokenId)
@@ -28,7 +28,7 @@ export default function Home() {
       let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
       let item = {
         price,
-        tokenId: i.tokenId.toString(),
+        tokenId: i.tokenId.toNumber(),
         seller: i.seller,
         owner: i.owner,
         image: meta.data.image,
@@ -46,7 +46,7 @@ export default function Home() {
     const connect = await web3modal.connect()
     const provider = new ethers.providers.Web3Provider(connect)
     const signer = provider.getSigner()
-    const contract = new ethers.Contract(nftMarketAddress, nftMarket.abi, signer)
+    const contract = new ethers.Contract(nftMarketAddress, NftMarket.abi, signer)
     const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
     const transaction = await contract.createMarketSale(nftAddress, nft.tokenId, {
       value: price
