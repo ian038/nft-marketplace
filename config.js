@@ -1,4 +1,4 @@
 
-  export const nftmarketaddress = "0xD78A941425134D2433Dc6a3D7EFde57089be8e84"
-  export const nftaddress = "0x7B838fF2BEC03d968fA126E495564864d0c85D48"
+  export const nftmarketaddress = "0x7c2a9d96122D0f9FBe4ae513Ce70A4C95a1E1205"
+  export const nftaddress = "0x2d026D83caBeFEa25fe81622fCA8984a491F60C3"
   
