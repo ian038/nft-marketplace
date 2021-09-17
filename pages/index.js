@@ -4,17 +4,14 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Web3Modal from "web3modal"
-
-import {
-  nftaddress, nftmarketaddress
-} from '../config'
+import { nftaddress, nftmarketaddress } from '../config'
 
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 import Market from '../artifacts/contracts/Market.sol/NFTMarket.json'
 
 export default function Home() {
   const [nfts, setNfts] = useState([])
-  const [loadingState, setLoadingState] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadNFTs()
@@ -42,7 +39,7 @@ export default function Home() {
       return item
     }))
     setNfts(items)
-    setLoadingState(false) 
+    setLoading(false) 
   }
 
   const buyNft = async (nft) => {
@@ -59,7 +56,8 @@ export default function Home() {
     await transaction.wait()
     loadNFTs()
   }
-  if (loadingState === 'loaded' && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>)
+
+  if (loading === false && !nfts.length) return (<h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>)
 
   return (
     <div>
